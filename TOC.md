@@ -1,5 +1,4 @@
 # MicroServices Tranning
-
 ## The Emergence of Microservices Architecture
 Why Microservices /what Microservice Promise? 
 - Microservices are a way of breaking large software projects into loosely coupled modules, which communicate with each other through simple APIs.
