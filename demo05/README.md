@@ -1,71 +1,59 @@
-# Demo 03
+# Demo 05
 ## Description
-This demo is a simple web application that uses Flask to display a web page with a greeting, the current time, and the name of the host(user). The application is composed of three files.
+This demo is a simple web application that uses 3 application to display a web page with a greeting, the current time, and the name of the host(user). 
+this version of demo contain 3 application, hello in python, world in java and time in golang. all tree application will be run in docker container, and we will use docker-compose to run all of them.
+each application accessed through traefik reverse proxy, so we can access all application through one port.
+
+Traefik is an open-source Edge Router that makes publishing your services a fun and easy experience. It receives requests on behalf of your system and finds out which components are responsible for handling them. Traefik role on micrservice architecture is as reverse proxy, so we can access all application through one port.
+
 ## Requirement
-- Python 3, tested with Python 3.10.6 on ubuntu 22.04, please consult [this link](https://www.python.org/downloads/) for other OS.
+- Docker and Docker Compose, tested with Docker version 20.10.8, build 3967b7d and docker-compose version 1.29.2
+- Images for each application, see Dockerfile in each application folder for more detail.
+
 ## Run.
-- install virtualenv `sudo  apt install python3.10-venv` (only need once, don't need to repeat if you already have virtualenv, you may change python3.10-venv to any other version of python3-venv that match your python version)  
-- create virtualenv `python -m venv .venv`
-- activate virtualenv `source .venv/bin/activate`
-- install requirements `pip install -r requirements.txt`
-- run 4 terminals, one for each application
-    - `python hello.py`
-    - `python world.py`
-    - `python hello-world.py`  
-- for time app, it's golang app, we will use docker (see docker documentation at https://docs.docker.com/get-started/overview/ for more detail)
-```dockerfile
-# Start from the latest golang base image
-FROM golang:1.20
-
-# Add Maintainer Info
-LABEL maintainer="iman <iman4hakim@gmail.com>"
-
-# Set the Current Working Directory inside the container
-WORKDIR /app
-
-# Copy go mod and sum files
-COPY go.mod go.sum ./
-
-# Download all dependencies. Dependencies will be cached if the go.mod and go.sum files are not changed
-RUN go mod download
-
-# Copy the source from the current directory to the Working Directory inside the container
-COPY . .
-
-# Build the Go app
-RUN go build -o main .
-
-# Expose port 5002 to the outside
-EXPOSE 5002
-
-# Command to run the executable
-CMD ["./main"]
-
-```
-You can build the Docker image by running the following command in the directory containing the Dockerfile:
-
+- before run this demo, make sure you have docker and docker-compose installed in your machine.
+- create network called `web` for traefik reverse proxy to communicate with other application
 ```bash
-docker build -t time-app .
+docker network create web
 ```
-This command builds a Docker image and tags it as `time-app`.
-You can run the Docker container using the following command:
-
+- run all application using docker-compose
 ```bash
-docker run -d -p 5002:5002 time-app
+docker-compose up -d
 ```
-if you want to see status of your docker container, you can use this command:
+- open browser and go to http://localhost/hello or http://localhost/world or http://localhost/time
+- to stop all application
 ```bash
-docker ps
+docker-compose down
 ```
-you will see something like this:
+- to stop all application and remove all container
 ```bash
-CONTAINER ID   IMAGE      COMMAND       CREATED          STATUS          PORTS                                       NAMES
-e1b2b2b2b2b2   time-app   "./main"      2 minutes ago    Up 2 minutes
+docker-compose down --rmi all
 ```
-to stop the container, you can use this command:
+- to stop all application and remove all container and volume
 ```bash
-docker stop e1b2b2b2b2b2
+docker-compose down --rmi all --volumes
 ```
-![demo4 terminal](../images/demo04-4terminal_with_go_docker.png)
-- access from browser  
-![access from browser](../images/demo03-web_output.png)
+- to stop all application and remove all container and volume and network
+```bash
+docker-compose down --rmi all --volumes --remove-orphans
+```
+- to follow log of all application
+```bash
+docker-compose logs -f
+```
+- to follow log of specific application
+```bash
+docker-compose logs -f <application_name>
+```
+- to access shell of specific application
+```bash
+docker-compose exec <application_name> sh
+```
+- to see status of all application
+```bash
+docker-compose ps
+```
+- to see status of specific application
+```bash
+docker-compose ps <application_name>
+```

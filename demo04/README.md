@@ -1,6 +1,7 @@
-# Demo 03
+# Demo 04
 ## Description
 This demo is a simple web application that uses Flask to display a web page with a greeting, the current time, and the name of the host(user). The application is composed of three files.
+in this version time app is written in golang, so we will use docker to run it.
 ## Requirement
 - Python 3, tested with Python 3.10.6 on ubuntu 22.04, please consult [this link](https://www.python.org/downloads/) for other OS.
 ## Run.
