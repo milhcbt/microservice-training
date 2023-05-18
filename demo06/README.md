@@ -1,4 +1,4 @@
-# Demo 05
+# Demo 06
 ## Description
 This demo is a simple web application that uses 3 application to display a web page with a greeting, the current time, and the name of the host(user). 
 this version of demo contain 3 application, hello in python, world in java and time in golang. all tree application will be run in docker container, and we will use docker-compose to run all of them.
@@ -9,6 +9,13 @@ Traefik is an open-source Edge Router that makes publishing your services a fun 
 ## Requirement
 - Docker and Docker Compose, tested with Docker version 20.10.8, build 3967b7d and docker-compose version 1.29.2
 - Images for each application, see Dockerfile in each application folder for more detail.
+- need htpasswd to generate password, on ubuntu can be installed using command `sudo apt install apache2-utils`   
+  generated static password using command example 
+  ```bash
+  $ htpasswd -nb admin pass
+    admin:$apr1$6KXq/9Ap$lSVXah1Uas0/O0fn2xkyM1
+  ```
+
 
 ## Run.
 - before run this demo, make sure you have docker and docker-compose installed in your machine.
