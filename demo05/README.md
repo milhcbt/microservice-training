@@ -20,7 +20,18 @@ docker network create web
 ```bash
 docker-compose up -d
 ```
-- open browser and go to http://localhost/hello or http://localhost/world or http://localhost/time
+![docker-compose up](../images/demo05-terminal.png)
+- open browser and go to http://localhost/hello or http://localhost/world or http://localhost/time for each application (service) directly,
+- run hello-world.py `python hello-world.py`
+```python
+def hello_world(name):
+    hello = requests.get('http://localhost/hello').text
+    world = requests.get(f'http://localhost/world/{name}').text
+    time = requests.get('http://localhost/time').text
+    return f"{hello} {world}, the time is {time}"
+```
+- go to http://localhost:5003/iman to access combined service trought hello-world.py  
+![demo web](../images/demo05-web.png)
 - to stop all application
 ```bash
 docker-compose down
