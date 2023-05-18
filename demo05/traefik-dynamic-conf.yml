@@ -1,0 +1,32 @@
+# Dynamic configuration
+http:
+  routers:
+    router01:
+      entryPoints:
+        - web
+      service: hello
+      rule: Path(`/hello`)
+    router02:
+      entryPoints:
+        - web
+      service: world
+      rule: PathPrefix(`/world{part:[\/]*}`,`/world/{name:A-Za-z0-9}`)
+    router03:
+      entryPoints:
+        - web
+      service: time
+      rule: Path(`/time`)
+  
+  services:
+    hello:
+      loadBalancer:
+        servers:
+          - url: http://hello:5000/
+    world:
+      loadBalancer:
+        servers:
+          - url: http://world:5001/
+    time:
+      loadBalancer:
+        servers:
+          - url: http://time:5002/
