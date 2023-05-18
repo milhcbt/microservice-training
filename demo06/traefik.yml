@@ -1,0 +1,12 @@
+entryPoints:
+  web:
+    address: ":80"
+
+providers:
+  file:
+    filename: "/etc/traefik/traefik-dynamic-conf.yml"
+    watch: true
+
+api:
+  insecure: true
+  dashboard: true

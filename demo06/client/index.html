@@ -1,0 +1,26 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Hello World</title>
+    <script>
+    async function fetchGreeting(name = 'world') {
+        try {
+            const hello = await fetch('http://localhost/hello').then(res => res.text());
+            const world = await fetch(`http://localhost/world/${name}`).then(res => res.text());
+            const time = await fetch('http://localhost/time').then(res => res.text());
+
+            document.getElementById('greeting').innerText = `${hello} ${world}, the time is ${time}`;
+        } catch (error) {
+            console.error('Error:', error);
+        }
+    }
+
+    window.onload = function() {
+        fetchGreeting();
+    }
+    </script>
+</head>
+<body>
+    <h1 id="greeting">Loading...</h1>
+</body>
+</html>
