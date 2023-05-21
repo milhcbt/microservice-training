@@ -20,5 +20,8 @@ EXPOSE 5000
 ENV NAME World
 ENV FLASK_APP hello.py
 
-# Run app.py when the container launches
-CMD ["flask", "run", "-h", "0.0.0.0"]
+# Copy a script that will run consul and import configuration
+# COPY ./start.sh start.sh
+RUN chmod +x start.sh
+
+CMD ["./start.sh"]
