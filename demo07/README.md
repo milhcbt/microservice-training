@@ -16,6 +16,7 @@ Traefik is an open-source Edge Router that makes publishing your services a fun 
     admin:$apr1$6KXq/9Ap$lSVXah1Uas0/O0fn2xkyM1
   ```
 
+
 ## Run.
 - before run this demo, make sure you have docker and docker-compose installed in your machine.
 - create network called `web` for traefik reverse proxy to communicate with other application
@@ -28,7 +29,7 @@ docker-compose up -d
 ```
 ![docker-compose up](../images/demo05-terminal.png)
 - open browser and go to http://localhost/hello or http://localhost/world or http://localhost/time for each application (service) directly,
-- run hello-world.py `python hello-world.py` (see previous demo for more detail)
+- run hello-world.py `python hello-world.py`
 ```python
 def hello_world(name):
     hello = requests.get('http://localhost/hello').text
@@ -40,31 +41,7 @@ def hello_world(name):
 ![demo web](../images/demo05-web.png)
 
 - you may also access html client version by go to http://localhost 
-Here is the javascript client code, with basic authentication
-```javascript
-<script>
-    async function fetchGreeting(name = 'world') {
-        const username = 'admin';
-        const password = '$apr1$6KXq/9Ap$lSVXah1Uas0/O0fn2xkyM1';
-        const headers = new Headers();
-        headers.set('Authorization', 'Basic ' + btoa(username + ":" + password));
-        
-        try {
-            const hello = await fetch('http://localhost/hello', { headers: headers }).then(res => res.text());
-            const world = await fetch(`http://localhost/world/${name}`, { headers: headers }).then(res => res.text());
-            const time = await fetch('http://localhost/time', { headers: headers }).then(res => res.text());
 
-            document.getElementById('greeting').innerText = `${hello} ${world}, the time is ${time}`;
-        } catch (error) {
-            console.error('Error:', error);
-        }
-    }
-
-    window.onload = function() {
-        fetchGreeting();
-    }
-    </script>
-```
 - to stop all application
 ```bash
 docker-compose down
@@ -147,73 +124,9 @@ services:
     #   - "5002:5002"
     networks:
       - web
-  client:
-    build: 
-      context: client
-      dockerfile: Dockerfile
-    # ports:
-    #   - "5003:5003"
-    networks:
-      - web
 
 networks:
   web:
     external: true
-```
 
-Traefik configuration file to route all applications, route support regex, so we can use regex to route all application with one rule. if you not familiar with regex, you can use [regex101](https://regex101.com/) to test your regex. or regex cheat sheet [here](https://cheatography.com/davechild/cheat-sheets/regular-expressions/), my favorite regex tool is regexbuddy, but it's not free, it's offline tool, you can download it [here](https://www.regexbuddy.com/), this tools based on popular regex book [Mastering Regular Expressions](https://www.amazon.com/Mastering-Regular-Expressions-Jeffrey-Friedl/dp/0596528124)
-```yaml
-# Dynamic configuration
-http:
-  routers:
-    router01:
-      entryPoints:
-        - web
-      middlewares:
-        - basic-auth
-      service: hello
-      rule: Path(`/hello`)
-    router02:
-      entryPoints:
-        - web
-      middlewares:
-        - basic-auth
-      service: world
-      rule: PathPrefix(`/world{part:[\/]*?}`,`/world/{name:[0-9A-Za-z]*}`)
-    router03:
-      entryPoints:
-        - web
-      middlewares:
-        - basic-auth
-      service: time
-      rule: Path(`/time`)
-    router04:
-      entryPoints:
-        - web
-      service: client
-      rule: Path(`/`)
-  
-  services:
-    hello:
-      loadBalancer:
-        servers:
-          - url: http://hello:5000/
-    world:
-      loadBalancer:
-        servers:
-          - url: http://world:5001/
-    time:
-      loadBalancer:
-        servers:
-          - url: http://time:5002/
-    client:
-      loadBalancer:
-        servers:
-          - url: http://client:5003/
-  
-  middlewares:
-    basic-auth:
-      basicAuth:
-        users:
-          - "admin:$apr1$6KXq/9Ap$lSVXah1Uas0/O0fn2xkyM1"
 ```

@@ -1,0 +1,82 @@
+[
+    {
+        "Key": "traefik/http/routers/router01/entryPoints/0",
+        "Value": "d2Vi"
+    },
+    {
+        "Key": "traefik/http/routers/router01/middlewares/0",
+        "Value": "YmFzaWMtYXV0aA=="
+    },
+    {
+        "Key": "traefik/http/routers/router01/service",
+        "Value": "aGVsbG8="
+    },
+    {
+        "Key": "traefik/http/routers/router01/rule",
+        "Value": "UGF0aChgL2hlbGxvYCk="
+    },
+    {
+        "Key": "traefik/http/routers/router02/entryPoints/0",
+        "Value": "d2Vi"
+    },
+    {
+        "Key": "traefik/http/routers/router02/middlewares/0",
+        "Value": "YmFzaWMtYXV0aA=="
+    },
+    {
+        "Key": "traefik/http/routers/router02/service",
+        "Value": "d29ybGQ="
+    },
+    {
+        "Key": "traefik/http/routers/router02/rule",
+        "Value": "UGF0aFByZWZpeChgL3dvcmxke3BhcnQ6W1wvXSp9YCxgL3dvcmxkL3tuYW1lOltBLVphLXowLTldKn1gKQ=="
+    },
+    {
+        "Key": "traefik/http/routers/router03/entryPoints/0",
+        "Value": "d2Vi"
+    },
+    {
+        "Key": "traefik/http/routers/router03/middlewares/0",
+        "Value": "YmFzaWMtYXV0aA=="
+    },
+    {
+        "Key": "traefik/http/routers/router03/service",
+        "Value": "dGltZQ=="
+    },
+    {
+        "Key": "traefik/http/routers/router03/rule",
+        "Value": "UGF0aChgL3RpbWVgKQ=="
+    },
+    {
+        "Key": "traefik/http/routers/router04/entryPoints/0",
+        "Value": "d2Vi"
+    },
+    {
+        "Key": "traefik/http/routers/router04/service",
+        "Value": "Y2xpZW50"
+    },
+    {
+        "Key": "traefik/http/routers/router04/rule",
+        "Value": "UGF0aChgL2Ap"
+    },
+    {
+        "Key": "traefik/http/services/hello/loadBalancer/servers/0/url",
+        "Value": "aHR0cDovL2hlbGxvOjUwMDAv"
+    },
+    {
+        "Key": "traefik/http/services/world/loadBalancer/servers/0/url",
+        "Value": "aHR0cDovL3dvcmxkOjUwMDEv"
+    },
+    {
+        "Key": "traefik/http/services/time/loadBalancer/servers/0/url",
+        "Value": "aHR0cDovL3RpbWU6NTAwMi8="
+    },
+    {
+        "Key": "traefik/http/services/client/loadBalancer/servers/0/url",
+        "Value": "aHR0cDovL2NsaWVudDo1MDAzLw=="
+    },
+    {
+        "Key": "traefik/http/middlewares/basic-auth/basicauth/users",
+        "Value": "YWRtaW46JGFwcjEkNktYcS85QXAkTFNWWGFoMVVhczAvTzBmbjJ4a3lNMQ=="
+    }
+]

@@ -14,7 +14,7 @@ http:
       middlewares:
         - basic-auth
       service: world
-      rule: PathPrefix(`/world{part:[\/]*?}`,`/world/{name:[0-9A-Za-z]*}`)
+      rule: PathPrefix(`/world{part:[\/]*}`,`/world/{name:A-Za-z0-9}`)
     router03:
       entryPoints:
         - web

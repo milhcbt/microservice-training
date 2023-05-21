@@ -52,13 +52,15 @@ This command builds a Docker image and tags it as `time-app`.
 You can run the Docker container using the following command:
 
 ```bash
-docker run -d -p 5002:5002 time-app
+docker run -d --rm -p 5002:5002 time-app
 ```
-if you want to see status of your docker container, you can use this command:
+This command runs the Docker container in detached mode, removes the container when it exits, and maps port 5002 on the host to port 5002 in the container.
+
+If you want to see status of your docker container, you can use this command:
 ```bash
 docker ps
 ```
-you will see something like this:
+You will see something like this:
 ```bash
 CONTAINER ID   IMAGE      COMMAND       CREATED          STATUS          PORTS                                       NAMES
 e1b2b2b2b2b2   time-app   "./main"      2 minutes ago    Up 2 minutes
@@ -67,6 +69,16 @@ to stop the container, you can use this command:
 ```bash
 docker stop e1b2b2b2b2b2
 ```
+You can also view logs and follow it of your container using this command:
+```bash 
+docker logs -f e1b2b2b2b2b2
+```
+You will see something like this:
+```bash
+2022/01/01 01:01:01 Starting server...
+2022/01/01 01:01:01 Server listening on port 5002
+```
+
 ![demo4 terminal](../images/demo04-4terminal_with_go_docker.png)
 - access from browser  
 ![access from browser](../images/demo03-web_output.png)

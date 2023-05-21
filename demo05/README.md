@@ -1,10 +1,10 @@
 # Demo 05
 ## Description
-This demo is a simple web application that uses 3 application to display a web page with a greeting, the current time, and the name of the host(user). 
-this version of demo contain 3 application, hello in python, world in java and time in golang. all tree application will be run in docker container, and we will use docker-compose to run all of them.
+This demo is a simple web application that combine 3 applications to display a web page with a greeting, the current time, and the name of the host(user). 
+this version of demo contain 3 applications, hello in python, world in java and time in golang. all tree application will be run in docker container, and we will use docker-compose to run all of them.
 each application accessed through traefik reverse proxy, so we can access all application through one port.
 
-Traefik is an open-source Edge Router that makes publishing your services a fun and easy experience. It receives requests on behalf of your system and finds out which components are responsible for handling them. Traefik role on micrservice architecture is as reverse proxy, so we can access all application through one port.
+Traefik is an open-source Edge Router that makes publishing your services a fun and easy experience. It receives requests on behalf of your system and finds out which components are responsible for handling them. Traefik role on micrservice architecture is as reverse proxy, so we can access all application through one port. further information about traefik can be found [here](https://doc.traefik.io/traefik/)
 
 ## Requirement
 - Docker and Docker Compose, tested with Docker version 20.10.8, build 3967b7d and docker-compose version 1.29.2
@@ -22,7 +22,7 @@ docker-compose up -d
 ```
 ![docker-compose up](../images/demo05-terminal.png)
 - open browser and go to http://localhost/hello or http://localhost/world or http://localhost/time for each application (service) directly,
-- run hello-world.py `python hello-world.py`
+- run hello-world.py `python hello-world.py` (see previous demo for more detail)
 ```python
 def hello_world(name):
     hello = requests.get('http://localhost/hello').text
@@ -34,6 +34,26 @@ def hello_world(name):
 ![demo web](../images/demo05-web.png)
 
 - you may also access html client version by go to http://localhost 
+here is javascript code for html client
+```javascript
+<script>
+    async function fetchGreeting(name = 'world') {
+        try {
+            const hello = await fetch('http://localhost/hello').then(res => res.text());
+            const world = await fetch(`http://localhost/world/${name}`).then(res => res.text());
+            const time = await fetch('http://localhost/time').then(res => res.text());
+
+            document.getElementById('greeting').innerText = `${hello} ${world}, the time is ${time}`;
+        } catch (error) {
+            console.error('Error:', error);
+        }
+    }
+
+    window.onload = function() {
+        fetchGreeting();
+    }
+    </script>
+    ```
 
 - to stop all application
 ```bash
@@ -117,9 +137,61 @@ services:
     #   - "5002:5002"
     networks:
       - web
+  client:
+    build: 
+      context: client
+      dockerfile: Dockerfile
+    # ports:
+    #   - "5003:5003"
+    networks:
+      - web
 
 networks:
   web:
     external: true
+```
+
+Traefik configuration file to route all applications, route support regex, so we can use regex to route all application with one rule. if you not familiar with regex, you can use [regex101](https://regex101.com/) to test your regex. or regex cheat sheet [here](https://cheatography.com/davechild/cheat-sheets/regular-expressions/), my favorite regex tool is regexbuddy, but it's not free, it's offline tool, you can download it [here](https://www.regexbuddy.com/), this tools based on popular regex book [Mastering Regular Expressions](https://www.amazon.com/Mastering-Regular-Expressions-Jeffrey-Friedl/dp/0596528124)
+```yaml
+# Dynamic configuration
+http:
+  routers:
+    router01:
+      entryPoints:
+        - web
+      service: hello
+      rule: Path(`/hello`)
+    router02:
+      entryPoints:
+        - web
+      service: world
+      rule: PathPrefix(`/world{part:[\/]*?}`,`/world/{name:[0-9A-Za-z]*}`)
+    router03:
+      entryPoints:
+        - web
+      service: time
+      rule: Path(`/time`)
+    router04:
+      entryPoints:
+        - web
+      service: client
+      rule: Path(`/`)
+  services:
+    hello:
+      loadBalancer:
+        servers:
+          - url: http://hello:5000/
+    world:
+      loadBalancer:
+        servers:
+          - url: http://world:5001/
+    time:
+      loadBalancer:
+        servers:
+          - url: http://time:5002/
+    client:
+      loadBalancer:
+        servers:
+          - url: http://client:5003/
 
 ```

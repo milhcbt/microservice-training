@@ -1,0 +1,83 @@
+version: '3'
+
+services:
+  gateway:
+    image: traefik:2.10
+    command: --configFile=/etc/traefik/traefik.yml
+    volumes:
+      - ./traefik.yml:/etc/traefik/traefik.yml
+      - ./traefik-dynamic-conf.yml:/etc/traefik/traefik-dynamic-conf.yml
+      - /var/run/docker.sock:/var/run/docker.sock
+    depends_on:
+      - consul
+    ports:
+      - "80:80"
+      - "443:443"
+      - "8080:8080"
+    networks:
+      - web
+  
+  consul:
+    image: consul:latest
+    volumes:
+      - consul_data:/consul/data
+    ports:
+      - "8500:8500"
+    networks:
+      - web
+
+
+
+  hello:
+    build: 
+      context: hello
+      dockerfile: Dockerfile
+    ports:
+      - "5000:5000"
+    depends_on:
+      - gateway
+    networks:
+      - web
+  
+  world:
+    build: 
+      context: world
+      dockerfile: Dockerfile
+    # ports:
+    #   - "5001:5001"
+    depends_on:
+      - consul
+      - gateway
+    networks:
+      - web
+  
+  time:
+    build: 
+      context: time
+      dockerfile: Dockerfile
+    # ports:
+    #   - "5002:5002"
+    depends_on:
+      - consul
+      - gateway
+    networks:
+      - web
+  
+  client:
+    build: 
+      context: client
+      dockerfile: Dockerfile
+    # ports:
+    #   - "5003:5003"
+    depends_on:
+      - consul
+      - gateway
+    networks:
+      - web
+
+networks:
+  web:
+    external: true
+
+volumes:
+  consul_data: {}

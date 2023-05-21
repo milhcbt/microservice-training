@@ -10,7 +10,7 @@ http:
       entryPoints:
         - web
       service: world
-      rule: PathPrefix(`/world{part:[\/]*}`,`/world/{name:A-Za-z0-9}`)
+      rule: PathPrefix(`/world{part:[\/]*?}`,`/world/{name:[0-9A-Za-z]*}`)
     router03:
       entryPoints:
         - web
