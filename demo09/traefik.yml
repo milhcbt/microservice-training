@@ -1,0 +1,23 @@
+entryPoints:
+  web:
+    address: ":80"
+
+providers:
+  # file:
+  #   filename: "/etc/traefik/traefik-dynamic-conf.yml"
+  #   watch: true
+  consul:
+    endpoints:
+    - "http://consul:8500"
+  #   tls: 
+  #     insecureSkipVerify: true
+  # consulCatalog:
+  #   prefix: "traefik"
+  #   exposedByDefault: false
+  #   endpoint:
+  #     address: "http://consul:8500"
+  #     scheme: "http"
+
+api:
+  insecure: true
+  dashboard: true

@@ -1,0 +1,53 @@
+# Dynamic configuration
+http:
+  routers:
+    router01:
+      entryPoints:
+        - web
+      middlewares:
+        - basic-auth
+      service: hello
+      rule: Path(`/hello`)
+    router02:
+      entryPoints:
+        - web
+      middlewares:
+        - basic-auth
+      service: world
+      rule: PathPrefix(`/world{part:[\/]*}`,`/world/{name:A-Za-z0-9}`)
+    router03:
+      entryPoints:
+        - web
+      middlewares:
+        - basic-auth
+      service: time
+      rule: Path(`/time`)
+    router04:
+      entryPoints:
+        - web
+      service: client
+      rule: Path(`/`)
+  
+  services:
+    hello:
+      loadBalancer:
+        servers:
+          - url: http://hello:5000/
+    world:
+      loadBalancer:
+        servers:
+          - url: http://world:5001/
+    time:
+      loadBalancer:
+        servers:
+          - url: http://time:5002/
+    client:
+      loadBalancer:
+        servers:
+          - url: http://client:5003/
+  
+  middlewares:
+    basic-auth:
+      basicAuth:
+        users:
+          - "admin:$apr1$6KXq/9Ap$lSVXah1Uas0/O0fn2xkyM1"

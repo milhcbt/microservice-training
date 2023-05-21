@@ -1,0 +1,31 @@
+### Register service to Consul KV
+@consul-host =localhost
+@consul-port =8500
+
+# Router 01
+
+### Register service to Consul KV
+PUT http://{{consul-host}}:{{consul-port}}/v1/kv/traefik/http/routers/router01/entryPoints/0
+Content-Type: text/plain
+web
+###
+PUT http://{{consul-host}}:{{consul-port}}/v1/kv/traefik/http/routers/router01/service
+Content-Type: text/plain
+hello
+###
+PUT http://{{consul-host}}:{{consul-port}}/v1/kv/traefik/http/routers/router01/rule
+Content-Type: text/plain
+Path(`/hello`)
+###
+PUT http://{{consul-host}}:{{consul-port}}/v1/kv/traefik/http/services/hello/loadBalancer/servers/0/url
+Content-Type: text/plain
+http://hello:5000/
+
+### Deregister service from Consul KV
+DELETE http://{{consul-host}}:{{consul-port}}/v1/kv/traefik/http/routers/router01/entryPoints/0
+###
+DELETE http://{{consul-host}}:{{consul-port}}/v1/kv/traefik/http/routers/router01/service
+###
+DELETE http://{{consul-host}}:{{consul-port}}/v1/kv/traefik/http/routers/router01/rule
+###
+DELETE http://{{consul-host}}:{{consul-port}}/v1/kv/traefik/http/services/hello/loadBalancer/servers/0/url
