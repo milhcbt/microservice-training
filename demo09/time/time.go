@@ -3,30 +3,37 @@ package main
 import (
 	"context"
 	"fmt"
-	"log"
-	"net/http"
+	"time"
 
 	"github.com/segmentio/kafka-go"
 )
 
-func timeHandler(w http.ResponseWriter, r *http.Request) {
-	kafkaReader := kafka.NewReader(kafka.ReaderConfig{
-		Brokers:   []string{"kafka:9092"},
-		Topic:     "test",
-		Partition: 0,
-		MinBytes:  10e3, // 10KB
-		MaxBytes:  10e6, // 10MB
+func main() {
+	// Set up the Kafka writer.
+	writer := kafka.NewWriter(kafka.WriterConfig{
+		Brokers: []string{"kafka:9092"},
+		Topic:   "test",
 	})
 
-	m, err := kafkaReader.ReadMessage(context.Background())
-	if err != nil {
-		log.Fatal(err)
-	}
-	fmt.Fprintf(w, string(m.Value))
-	kafkaReader.Close()
-}
+	// Loop forever.
+	for {
+		// Send the current time to the Kafka topic.
+		currentTime := time.Now().Format(time.RFC3339)
+		err := writer.WriteMessages(context.Background(), kafka.Message{
+			Key:   []byte("key"),
+			Value: []byte(currentTime),
+		})
+		if err != nil {
+			fmt.Printf("failed to write message: %v\n", err)
+		}
 
-func main() {
-	http.HandleFunc("/", timeHandler)
-	http.ListenAndServe(":5002", nil)
+		// Wait for one second before sending the next message.
+		time.Sleep(10 * time.Second)
+	}
+
+	// Close the Kafka writer.
+	err := writer.Close()
+	if err != nil {
+		fmt.Printf("failed to close writer: %v\n", err)
+	}
 }

@@ -7,7 +7,7 @@ WORKDIR /home/gradle/src
 COPY . .
 
 # Build a release artifact.
-RUN gradle clean shadowJar --no-daemon
+RUN gradle clean shadowJar --no-daemon 
 
 FROM eclipse-temurin:17-jdk-jammy
 

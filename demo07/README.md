@@ -1,10 +1,6 @@
-# Demo 06
+# Demo 07
 ## Description
-This demo is a simple web application that uses 3 application to display a web page with a greeting, the current time, and the name of the host(user). 
-this version of demo contain 3 application, hello in python, world in java and time in golang. all tree application will be run in docker container, and we will use docker-compose to run all of them.
-each application accessed through traefik reverse proxy, so we can access all application through one port.
-
-Traefik is an open-source Edge Router that makes publishing your services a fun and easy experience. It receives requests on behalf of your system and finds out which components are responsible for handling them. Traefik role on micrservice architecture is as reverse proxy, so we can access all application through one port.
+see Demo06, this add consul as configuration server for traefik.
 
 ## Requirement
 - Docker and Docker Compose, tested with Docker version 20.10.8, build 3967b7d and docker-compose version 1.29.2
@@ -87,46 +83,87 @@ version: '3'
 
 services:
   gateway:
-    image: traefik:v2.5
+    image: traefik:2.10
     command: --configFile=/etc/traefik/traefik.yml
     volumes:
       - ./traefik.yml:/etc/traefik/traefik.yml
       - ./traefik-dynamic-conf.yml:/etc/traefik/traefik-dynamic-conf.yml
       - /var/run/docker.sock:/var/run/docker.sock
+    depends_on:
+      - consul
     ports:
       - "80:80"
       - "443:443"
       - "8080:8080"
     networks:
       - web
+  
+  consul:
+    build:
+      context: consul
+      dockerfile: Dockerfile
+    volumes:
+      - consul_data:/consul/data
+    ports:
+      - "8500:8500"
+    networks:
+      - web
+
+
 
   hello:
     build: 
       context: hello
       dockerfile: Dockerfile
-    # ports:
-    #   - "5000:5000"
+    ports:
+      - "5000:5000"
+    depends_on:
+      - consul
+      - gateway
     networks:
       - web
+  
   world:
     build: 
       context: world
       dockerfile: Dockerfile
     # ports:
     #   - "5001:5001"
+    depends_on:
+      - consul
+      - gateway
     networks:
       - web
+  
   time:
     build: 
       context: time
       dockerfile: Dockerfile
     # ports:
     #   - "5002:5002"
+    depends_on:
+      - consul
+      - gateway
+    networks:
+      - web
+  
+  client:
+    build: 
+      context: client
+      dockerfile: Dockerfile
+    # ports:
+    #   - "5003:5003"
+    depends_on:
+      - consul
+      - gateway
     networks:
       - web
 
 networks:
   web:
     external: true
+
+volumes:
+  consul_data: {}
 
 ```

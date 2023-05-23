@@ -55,8 +55,8 @@ services:
     build: 
       context: time
       dockerfile: Dockerfile
-    # ports:
-    #   - "5002:5002"
+    ports:
+      - "5002:5002"
     depends_on:
       - gateway
       - kafka
