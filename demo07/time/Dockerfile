@@ -1,5 +1,5 @@
 # Start from the latest golang base image
-FROM golang:1.20
+FROM golang:1.20-alpine
 
 # Add Maintainer Info
 LABEL maintainer="iman <iman4hakim@gmail.com>"

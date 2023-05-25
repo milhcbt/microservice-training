@@ -1,0 +1,190 @@
+version: '3'
+
+services:
+  gateway:
+    image: traefik:2.10
+    command: --configFile=/etc/traefik/traefik.yml
+    volumes:
+      - ./traefik.yml:/etc/traefik/traefik.yml
+      - ./traefik-dynamic-conf.yml:/etc/traefik/traefik-dynamic-conf.yml
+      - /var/run/docker.sock:/var/run/docker.sock
+    depends_on:
+      - consul
+    ports:
+      - "80:80"
+      - "443:443"
+      - "8080:8080"
+    networks:
+      - web
+    logging:
+      driver: fluentd
+      options:
+        fluentd-address: fluentd:24224
+        tag: gateway
+  
+  consul:
+    image: consul:latest
+    volumes:
+      - consul_data:/consul/data
+    ports:
+      - "8500:8500"
+    depends_on:
+      - fluentd
+    networks:
+      - web
+    logging:
+      driver: fluentd
+      options:
+        fluentd-address: fluentd:24224
+        tag: consul
+
+  hello:
+    build: 
+      context: hello
+      dockerfile: Dockerfile
+    ports:
+      - "5000:5000"
+    depends_on:
+      - gateway
+      - kafka
+    networks:
+      - web
+    logging:
+      driver: fluentd
+      options:
+        fluentd-address: fluentd:24224
+        tag: hello
+
+  world:
+    build: 
+      context: world
+      dockerfile: Dockerfile
+    ports:
+      - "5001:5001"
+    depends_on:
+      - gateway
+    networks:
+      - web
+    # logging:
+    #   driver: fluentd
+    #   options:
+    #     fluentd-address: fluentd:24224
+    #     tag: world
+  
+  time:
+    build: 
+      context: time
+      dockerfile: Dockerfile
+    ports:
+      - "5002:5002"
+    depends_on:
+      - gateway
+      - kafka
+    networks:
+      - web
+    logging:
+      driver: fluentd
+      options:
+        fluentd-address: fluentd:24224
+        tag: time
+
+  client:
+    build: 
+      context: client
+      dockerfile: Dockerfile
+    depends_on:
+      - hello
+      - world
+      - time
+    networks:
+      - web
+    logging:
+      driver: fluentd
+      options:
+        fluentd-address: fluentd:24224
+        tag: client
+
+  zookeeper:
+    image: confluentinc/cp-zookeeper:latest
+    environment:
+      ZOOKEEPER_CLIENT_PORT: 2181
+    networks:
+      - web
+    logging:
+      driver: fluentd
+      options:
+        fluentd-address: fluentd:24224
+        tag: zookeeper
+
+  kafka:
+    image: confluentinc/cp-kafka:latest
+    depends_on:
+      - zookeeper
+    ports:
+      - "9092:9092"
+    environment:
+      KAFKA_BROKER_ID: 1
+      KAFKA_ZOOKEEPER_CONNECT: zookeeper:2181
+      KAFKA_ADVERTISED_LISTENERS: PLAINTEXT://kafka:9092
+      KAFKA_OFFSETS_TOPIC_REPLICATION_FACTOR: 1
+    networks:
+      - web
+    logging:
+      driver: fluentd
+      options:
+        fluentd-address: fluentd:24224
+        tag: kafka
+
+  kafka-ui:
+    image: provectuslabs/kafka-ui:latest
+    depends_on:
+      - kafka
+    ports:
+      - "8888:8080"
+    environment:
+      KAFKA_CLUSTERS_0_NAME: local
+      KAFKA_CLUSTERS_0_BOOTSTRAPSERVERS: kafka:9092
+      KAFKA_CLUSTERS_0_ZOOKEEPER: zookeeper:2181
+    networks:
+      - web
+    logging:
+      driver: fluentd
+      options:
+        fluentd-address: fluentd:24224
+        tag: kafka-ui
+
+  elasticsearch:
+    image: elasticsearch:7.17.0
+    ports:
+      - "9200:9200"
+    environment:
+      - discovery.type=single-node
+    networks:
+      - web
+  kibana:
+    image: kibana:7.17.0
+    ports:
+      - "5601:5601"
+    depends_on:
+      - elasticsearch
+    networks:
+      - web
+  fluentd:
+    build: ./fluentd
+    volumes:
+      - ./fluentd/conf:/fluentd/etc
+    links:
+      - "elasticsearch"
+    ports:
+      - "24224:24224"
+      - "24224:24224/udp"
+    networks:
+      - web
+
+networks:
+  web:
+    external: true
+
+volumes:
+  consul_data: {}
+  esdata:

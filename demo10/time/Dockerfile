@@ -1,5 +1,5 @@
-# Start from the latest golang base image from https://hub.docker.com/_/golang 
-FROM golang:1.20.0-alpine
+# Start from the latest golang base image
+FROM golang:1.20
 
 # Add Maintainer Info
 LABEL maintainer="iman <iman4hakim@gmail.com>"
