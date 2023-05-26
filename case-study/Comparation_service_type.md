@@ -14,3 +14,17 @@ Note that these technologies aren't directly comparable as they are designed for
 | Vendor lock-in       | Potentially, depending on the infrastructure and tools used. | Depends on the specific service mesh used. | High potential for vendor lock-in. |
 
 Again, it's important to remember that these technologies often complement each other rather than compete. For instance, a microservices architecture might utilize a service mesh for communication and be deployed on a serverless platform. The best technology (or combination of technologies) depends on the specific needs and context of the project.
+
+I found some GitHub repositories that contain examples of microservices, serverless and service mesh. Here are some of them:
+
+- **ecommerce-microservices** by mehdihadeli¹: A practical e-commerce microservices, built with .Net 7, Domain-Driven Design, CQRS, Vertical Slice Architecture, Event-Driven Architecture, and the latest technologies.
+- **robot-shop** by instana[¹](https://github.com/instana/robot-shop): Sample microservices application for playing with microservices robot performance-monitoring distributed-tracing.
+- **microservices-scaffold** by python-microservices¹: Barebone Python Microservices with Flask.
+- **serverless/examples** by serverless³: A collection of boilerplates and examples of serverless architectures built with the Serverless Framework on AWS Lambda, Microsoft Azure, Google Cloud Functions, and more.
+
+You can also read this article by Joe Ward[²](https://blog.developer.adobe.com/serverless-microservices-and-service-mesh-oh-my-cd7903bd499d) that explains the concepts and benefits of serverless, microservices and service mesh in detail.
+
+
+(1) microservice-example · GitHub Topics · GitHub. https://github.com/topics/microservice-example.    
+(2) serverless/examples: Serverless Examples - GitHub. https://github.com/serverless/examples.  
+(3) Serverless, Microservices, and Service Mesh — Oh My. https://blog.developer.adobe.com/serverless-microservices-and-service-mesh-oh-my-cd7903bd499d.

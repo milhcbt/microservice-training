@@ -1,0 +1,32 @@
+version: '3'
+
+services:
+  hello:
+    build: 
+      context: hello
+      dockerfile: Dockerfile
+    ports:
+      - "5000:5000"
+    networks:
+      - web
+  world:
+    build: 
+      context: world
+      dockerfile: Dockerfile
+    ports:
+      - "5001:5001"
+    networks:
+      - web
+      
+  client:
+    build: 
+      context: client
+      dockerfile: Dockerfile
+    ports:
+      - "5003:5003"
+    networks:
+      - web
+
+networks:
+  web:
+    external: true
